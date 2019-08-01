@@ -10,8 +10,13 @@
 <body>
     {{-- Menu --}}
     <div class="bg-info text-white p-5 mb-3">
+        <a href="/" class="btn btn-secondary">Landing Page</a>
         <a href="{{route('posts.index')}}" class="btn btn-secondary">Home</a>
         <a href="{{route('posts.create')}}" class="btn btn-secondary">Create Post</a>
+        <a href="{{route('abouts.create')}}" class="btn btn-secondary">Create About Us Text</a>
+        <a href="{{route('services.create')}}" class="btn btn-secondary">Create Service</a>
+        <a href="{{route('quotes.create')}}" class="btn btn-secondary">Create New Quote</a>
+        <a href="{{route('portfolios.create')}}" class="btn btn-secondary">Create New Portfolio Entry</a>
         @auth
         <form class="d-inline-block float-right" action="{{route('logout')}}" method="post">
             @csrf
