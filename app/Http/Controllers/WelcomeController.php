@@ -7,14 +7,18 @@ use App\Post;
 use App\Portfolio;
 use App\Quotes;
 use App\About;
+use App\Service;
 
 class WelcomeController extends Controller
 {
     public static function index(){
         $posts = Post::all();
         $about = About::all();
-
-        return view('welcome', compact('posts','about'));
+        $quotes = Quotes::all();
+        $portfolios = Portfolio::all();
+        $services = Service::all();
+        
+        return view('welcome', compact('posts','about','quotes','portfolios','services'));
     }
     //
 }
