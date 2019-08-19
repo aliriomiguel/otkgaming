@@ -26,6 +26,18 @@
         <textarea name="content" id="content" cols="30" rows="10" class="form-control">{{$post->content}}</textarea>
     </div>
     <div class="form-group">
+        <label for="author">Author</label>
+        <input name="author" id="author" class="form-control" value="{{$post->author}}">
+    </div>
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select name="category" id="category">
+            @foreach($categories as $category)
+                <option name="category" value="{{$category->id}}" @if($category->id == $post->category->id) selected @endif>{{$category->name}}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="form-group">
         <button type="submit" class="btn btn-outline-info">Update post</button>
     </div>
 </form>

@@ -11,19 +11,28 @@
 |
 */
 
-Route::get('/', function () {
+Route::resource('/', 'WelcomeController');
+/* Route::get('/', function () {
     return view('welcome');
-});
-Route::get('/dashboard',function(){
+}); */
+Route::resource('dashboard', 'DashboardController');
+/* Route::get('/dashboard',function(){
     return view('dashboard');
-});
+}); */
 
 Route::resource('posts','PostController');
+Route::post('/posts/{post}/setfeatured','PostController@setFeatured');
+Route::post('/posts/{post}/unsetfeatured','PostController@unsetFeatured');
+
 Route::resource('abouts','AboutController');
+Route::post('/abouts/{about}/showlanding','AboutController@showLanding');
+Route::post('/abouts/{about}/hidelanding','AboutController@hideLanding');
+
 Route::resource('services','ServiceController');
 Route::resource('portfolios','PortfolioController');
 Route::resource('quotes','QuotesController');
 Route::resource('contacts','ContactController');
+Route::resource('categories','CategoryController');
 
 Auth::routes();
 

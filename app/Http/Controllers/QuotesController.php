@@ -14,6 +14,8 @@ class QuotesController extends Controller
      */
     public function index()
     {
+        $quotes = Quotes::orderBy('created_at','desc')->paginate(10);
+        return view('quotes.index', compact('quotes'));
         //
     }
 
@@ -24,6 +26,7 @@ class QuotesController extends Controller
      */
     public function create()
     {
+        return view('quotes.create');
         //
     }
 
@@ -35,6 +38,15 @@ class QuotesController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'author' => 'required|min:3',
+            'quote' => 'required|min:10'
+        ]);
+        Quotes::create([
+            'author' => $request->author,
+            'quote' => $request->quote
+        ]);
+        return redirect(route('quotes.index'));
         //
     }
 
@@ -44,8 +56,9 @@ class QuotesController extends Controller
      * @param  \App\Quotes  $quotes
      * @return \Illuminate\Http\Response
      */
-    public function show(Quotes $quotes)
+    public function show(Quotes $quote)
     {
+        return view('quotes.show',compact('quote'));
         //
     }
 
@@ -55,8 +68,9 @@ class QuotesController extends Controller
      * @param  \App\Quotes  $quotes
      * @return \Illuminate\Http\Response
      */
-    public function edit(Quotes $quotes)
+    public function edit(Quotes $quote)
     {
+        return view('quotes.edit',compact('quote'));
         //
     }
 
@@ -67,8 +81,13 @@ class QuotesController extends Controller
      * @param  \App\Quotes  $quotes
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Quotes $quotes)
+    public function update(Request $request, Quotes $quote)
     {
+        $quote->quote = $request->quote;
+        $quote->author = $request->author;
+        $quote->save();
+        session()->flash('message','Your quote text has been updated');
+        return redirect(route('quotes.index'));
         //
     }
 
@@ -78,8 +97,10 @@ class QuotesController extends Controller
      * @param  \App\Quotes  $quotes
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Quotes $quotes)
+    public function destroy(Quotes $quote)
     {
+        $quote->delete();
+        return redirect(route('quotes.index'));
         //
     }
 }

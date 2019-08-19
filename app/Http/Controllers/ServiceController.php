@@ -14,6 +14,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
+        $services = Service::orderBy('created_at','desc')->paginate(10);
+        return view('services.index',compact('services'));
         //
     }
 
@@ -24,6 +26,7 @@ class ServiceController extends Controller
      */
     public function create()
     {
+        return view('services.create');
         //
     }
 
@@ -35,6 +38,23 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
+        $this->validate($request,[
+            'name' => 'required|min:3',
+            'description' => 'required|min:10',
+            'icon' => 'required|max:10240|mimes:png,jpg,jpeg'
+        ]);
+        $iconFile = $request->file('icon');
+        $iconName = $iconFile->getClientOriginalName();
+        Service::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'icon' => $iconName
+        ]);
+        $iconFile->move(base_path().'/public/img/icons',$iconName);
+
+        return redirect(route('services.index'));
+
         //
     }
 
@@ -46,6 +66,7 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
+        return view('services.show',compact('service'));
         //
     }
 
@@ -57,6 +78,7 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
+        return view('services.edit',compact('service'));
         //
     }
 
@@ -69,6 +91,18 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
+        $service->name = $request->name;
+        $service->description = $request->description;
+        if($iconFile = $request->file('icon')){
+            $iconName = $iconFile->getClientOriginalName();
+            if($service->icon != $iconName || $iconName != null){
+                $service->icon = $iconName;
+                $iconFile->move(base_path().'/public/img/icons',$iconName);
+            }
+        }
+        $service->save();
+        session()->flash('message','Your service has been updated');
+        return redirect(route('services.index'));
         //
     }
 
@@ -80,6 +114,8 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
+        $service->delete();
+        return redirect(route('services.index'));
         //
     }
 }

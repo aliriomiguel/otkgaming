@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 class AboutController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth')->except(['index','show']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,6 +17,8 @@ class AboutController extends Controller
      */
     public function index()
     {
+        $abouts = About::orderBy('created_at','desc')->paginate(10);
+        return view('abouts.index',compact('abouts'));
         //
     }
 
@@ -24,6 +29,7 @@ class AboutController extends Controller
      */
     public function create()
     {
+        return view('abouts.create');
         //
     }
 
@@ -35,6 +41,14 @@ class AboutController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'about' => 'required|min:10'
+        ]);
+        About::create([
+            'about' => $request->about,
+            'active_text' => 0
+        ]);
+        return redirect(route('abouts.index'));
         //
     }
 
@@ -46,6 +60,7 @@ class AboutController extends Controller
      */
     public function show(About $about)
     {
+        return view('abouts.show',compact('about'));
         //
     }
 
@@ -57,6 +72,7 @@ class AboutController extends Controller
      */
     public function edit(About $about)
     {
+        return view('abouts.edit', compact('about'));
         //
     }
 
@@ -69,7 +85,33 @@ class AboutController extends Controller
      */
     public function update(Request $request, About $about)
     {
+        $about->about = $request->about;
+        $about->save();
+        session()->flash('message','Your about text has been updated');
+        return redirect(route('abouts.index'));
         //
+    }
+
+    public function showLanding($id){
+        $about = About::find($id);
+
+        $about->active_text = 1;
+        $saved = $about->save();
+
+        return response()->json([
+            'success' => $saved
+        ]);
+    }
+
+    public function hideLanding($id){
+        $about = About::find($id);
+
+        $about->active_text = 0;
+        $saved = $about->save();
+
+        return response()->json([
+            'success' => $saved
+        ]);
     }
 
     /**
@@ -80,6 +122,8 @@ class AboutController extends Controller
      */
     public function destroy(About $about)
     {
+        $about->delete();
+        return redirect(route('abouts.index'));
         //
     }
 }

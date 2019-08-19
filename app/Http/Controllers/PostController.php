@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Category;
+use App\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -19,7 +21,9 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::orderBy('created_at','desc')->paginate(10);
-        return view('posts.index', compact('posts'));
+        $users = User::all();
+        $categories = Category::all();
+        return view('posts.index', compact('posts','users','categories'));
         //
     }
 
@@ -30,7 +34,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
         //
     }
 
@@ -44,11 +49,17 @@ class PostController extends Controller
     {
         $this->validate($request,[
             'title' => 'required|min:3',
-            'content' => 'required|min:10'
+            'content' => 'required|min:10',
+            'author' => 'min:3',
+            'category' => 'required'
         ]);
         Post::create([
             'title' => $request->title,
-            'content' => $request->content
+            'content' => $request->content,
+            'author' => $request->author,
+            'featured' => 0,
+            'category_id' => $request->category,
+            'user_id' => auth()->user()->id
         ]);
         return redirect(route('posts.index'));
         //
@@ -74,8 +85,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //dd($post);
-        return view('posts.edit', compact('post'));
+        $categories = Category::all();
+        return view('posts.edit', compact('post','categories'));
         //
     }
 
@@ -94,6 +105,28 @@ class PostController extends Controller
         session()->flash('message','Your post have been updated');
         return redirect()->back();
         //
+    }
+
+    public function setFeatured($id){
+        $post = Post::find($id);
+
+        $post->featured = 1;
+        $saved = $post->save();
+
+        return response()->json([
+            'success' => $saved
+        ]);
+    }
+
+    public function unsetFeatured($id){
+        $post = Post::find($id);
+
+        $post->featured = 0;
+        $saved = $post->save();
+
+        return response()->json([
+            'success' => $saved
+        ]);
     }
 
     /**
