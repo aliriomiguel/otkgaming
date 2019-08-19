@@ -117,6 +117,9 @@
                 </div>
             </div>
         </section>
+
+        {{-- La seccion de news va a hacer con un card group en los posts que no estan destacados y en los featured
+        usaremos https://getbootstrap.com/docs/4.3/components/card/#image-overlays --}}
         <!--main-section-end-->
         <section class="main-section alabaster">
             <!--main-section alabaster-start-->
@@ -172,10 +175,10 @@
     
                 });
     
-          $('.Portfolio-box').magnificPopup({
+          /* $('.Portfolio-box').magnificPopup({
             delegate: 'a',
             type: 'image'
-          });
+          }); */
     
             });
         </script>
@@ -242,7 +245,7 @@
                     }
     
                 }).smartresize(); // trigger resize to set container width
-                $('.portfolioFilter a').click(function() {
+                /* $('.portfolioFilter a').click(function() {
                     $('.portfolioFilter .current').removeClass('current');
                     $(this).addClass('current');
     
@@ -252,7 +255,7 @@
                         filter: selector,
                     });
                     return false;
-                });
+                }); */
     
             });
         </script>
